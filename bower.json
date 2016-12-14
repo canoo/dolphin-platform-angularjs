@@ -1,0 +1,22 @@
+{
+  "name": "dolphin-platform-angularjs",
+  "homepage": "https://github.com/canoo/dolphin-platform-angularjs",
+  "authors": [
+    "Hendrik Ebbers <hendrik.ebbers@web.de>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.6.0",
+    "dolphin-js": "^0.8.8",
+    "core.js": "^2.4.1"
+  }
+}
