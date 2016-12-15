@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<script src="../bower_components/angular/angular.js"></script>
+<script src="../bower_components/dolphin-js/dist/dolphin.js"></script>
+<script src="../src/dp.services.js"></script>
+
+<body>g
+
+
+<script>
+    var app = angular.module("MyApplication", ["DolphinPlatform"]).config(function ($dolphinConfigProvider) {
+        var readDolphinConfig = function () {
+            return {
+                DOLPHIN_URL: "http://localhost:8080/todo-app/dolphin"
+            };
+        };
+        $dolphinConfigProvider.configure(readDolphinConfig());
+    });
+
+</script>
+
+
+
+
+
+
+
+<div ng-app="MyApplication" ng-controller="MyController">
+    <input type="text" name="input" ng-model="model.newItemText" ng-trim="false">
+    <button ng-click="add()">add</button>
+</div>
+
+<script>
+    app.controller("MyController", function($scope, clientContext) {
+
+        clientContext.createController($scope, 'ToDoController').
+        then(function (controllerProxy) {
+
+            $scope.$apply(function(){
+                $scope.model.newItemText = 'angular';
+            });
+
+            $scope.add = function() {
+                controllerProxy.invoke('add');
+                $scope.model.newItemText = 'blub';
+            };
+
+        });
+
+    });
+</script>
+
+</body>
+</html>
+
