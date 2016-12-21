@@ -23,33 +23,6 @@ angular.module('DolphinPlatform').factory('vanillaClientContext', ['dolphin', '$
     return vanillaClientContext;
 }]);
 
-angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', '$window', function (vanillaClientContext, $window) {
-    var clientContext = {
-        createController: function (scope, controllerName) {
-            return vanillaClientContext.createController(controllerName).then(function (controllerProxy) {
-                scope.$on("$destroy", function () {
-                    controllerProxy.destroy();
-                });
-                scope.model = controllerProxy.model;
-
-                //TODO: Hier müssen Observer registeriert werden um scope.$apply() nach Änderungen aufzurufen /
-                // Änderungen an BeanManager weiterzureichen...
-
-                scope.$apply();
-                return controllerProxy;
-            });
-        },
-        disconnect: function () {
-            vanillaClientContext.disconnect();
-        }
-    };
-
-    $window.onbeforeunload = clientContext.disconnect;
-
-    return clientContext;
-}]);
-
-
 angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vanillaClientContext', function ($rootScope, vanillaClientContext) {
 
     $rootScope.waitingForGlobalDolphinApply = false;
@@ -71,56 +44,83 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
                 fn.apply(scope, arguments);
             };
         },
+        exists: function (object) {
+            return typeof object !== 'undefined' && object !== null;
+        },
+        deepEqual: function (array1, array2) {
+            if (array1 === array2 || (!this.exists(array1) && !this.exists(array2))) {
+                return true;
+            }
+            if (this.exists(array1) !== this.exists(array2)) {
+                return false;
+            }
+            var n = array1.length;
+            if (array2.length !== n) {
+                return false;
+            }
+            for (var i = 0; i < n; i++) {
+                if (array1[i] !== array2[i]) {
+                    return false;
+                }
+            }
+            return true;
+        },
         init: function (beanManager) {
             this.listeners = new Map();
 
-            beanManager.onBeanUpdate(bindScope(this, this.onBeanUpdateHandler));
-            beanManager.onArrayUpdate(bindScope(this, this.onArrayUpdateHandler));
+            beanManager.onBeanUpdate(this.onBeanUpdateHandler);
+            beanManager.onArrayUpdate(this.onArrayUpdateHandler);
         },
         onBeanUpdateHandler: function (bean, propertyName, newValue, oldValue) {
             if (oldValue === newValue) {
                 return;
             }
             var listenerList = this.listeners.get(bean);
-            if (exists(listenerList) && listenerList.length > 0) {
+            if (this.exists(listenerList) && listenerList.length > 0) {
                 var entry = listenerList[0];
                 var element = entry.element;
                 var path = entry.rootPath + '.' + propertyName;
-                element.set(path, newValue);
+                console.error("Hier fehlt nun das setzten der property in angular");
+                //element.set(path, newValue);
             } else {
-                bean[propertyName] = newValue;
+                console.error("Hier fehlt nun das setzten der property in angular");
+               // bean[propertyName] = newValue;
             }
         },
         onArrayUpdateHandler: function (bean, propertyName, index, count, newElements) {
             var array = bean[propertyName];
             var oldElements = array.slice(index, index + count);
-            if (deepEqual(newElements, oldElements)) {
+            if (this.deepEqual(newElements, oldElements)) {
                 return;
             }
             var listenerList = this.listeners.get(bean);
-            if (exists(listenerList) && listenerList.length > 0) {
+            if (this.exists(listenerList) && listenerList.length > 0) {
                 var entry = listenerList[0];
                 var element = entry.element;
                 var path = entry.rootPath + '.' + propertyName;
                 if (typeof newElements === 'undefined') {
-                    element.splice(path, index, count);
+                    console.error("Hier fehlt nun das mutieren der liste in angular");
+                    //element.splice(path, index, count);
                 } else {
-                    element.splice.apply(element, [path, index, count].concat(newElements));
+                    console.error("Hier fehlt nun das mutieren der liste in angular");
+                    //element.splice.apply(element, [path, index, count].concat(newElements));
                 }
             } else {
                 if (typeof newElements === 'undefined') {
-                    array.splice(index, count);
+                    console.error("Hier fehlt nun das mutieren der liste in angular");
+                    //array.splice(index, count);
                 } else {
-                    array.splice.apply(array, [index, count].concat(newElements));
+                    console.error("Hier fehlt nun das mutieren der liste in angular");
+                    //array.splice.apply(array, [index, count].concat(newElements));
                 }
             }
         },
         bind: function (element, rootPath, value) {
-            if (!exists(value) || typeof value !== 'object') {
+            if (!this.exists(value) || typeof value !== 'object') {
                 return;
             }
             var listenerList = this.listeners.get(value);
-            if (!exists(listenerList)) {
+            if (!this.exists(listenerList)) {
                 listenerList = [];
                 this.listeners.set(value, listenerList);
             }
@@ -139,11 +139,11 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
             }
         },
         unbind: function (element, rootPath, value) {
-            if (!exists(value) || typeof value !== 'object') {
+            if (!this.exists(value) || typeof value !== 'object') {
                 return;
             }
             var listenerList = this.listeners.get(value);
-            if (exists(listenerList)) {
+            if (this.exists(listenerList)) {
                 var n = listenerList.length;
                 for (var i = 0; i < n; i++) {
                     var entry = listenerList[i];
@@ -171,3 +171,34 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
     return dolphinBinding;
 
 }]);
+
+angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', 'dolphinBinding', '$window', function (vanillaClientContext, dolphinBinding, $window) {
+    var clientContext = {
+        createController: function (scope, controllerName) {
+            return vanillaClientContext.createController(controllerName).then(function (controllerProxy) {
+                scope.$on("$destroy", function () {
+                    controllerProxy.destroy();
+                });
+                scope.model = controllerProxy.model;
+
+                //TODO: Hier müssen Observer registeriert werden um scope.$apply() nach Änderungen aufzurufen /
+                // Änderungen an BeanManager weiterzureichen...
+
+                scope.$apply();
+                return controllerProxy;
+            });
+        },
+        disconnect: function () {
+            vanillaClientContext.disconnect();
+        }
+    };
+
+    dolphinBinding.init(vanillaClientContext.beanManager);
+
+    $window.onbeforeunload = clientContext.disconnect;
+
+    return clientContext;
+}]);
+
+
+
