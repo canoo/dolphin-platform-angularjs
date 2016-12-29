@@ -4,9 +4,7 @@
 <script src="../bower_components/dolphin-js/dist/dolphin.js"></script>
 <script src="../src/dp.services.js"></script>
 
-<body>g
-
-
+<body>
 <script>
     var app = angular.module("MyApplication", ["DolphinPlatform"]).config(function ($dolphinConfigProvider) {
         var readDolphinConfig = function () {
@@ -21,13 +19,12 @@
 
 
 
-
-
-
-
 <div ng-app="MyApplication" ng-controller="MyController">
     <input type="text" name="input" ng-model="model.newItemText" ng-trim="false">
     <button ng-click="add()">add</button>
+    <div ng-repeat="item in model.items">
+        {{item.text}}<input type="checkbox" ng-model="item.completed" ng-change="stateChanged(item.text)">
+    </div>
 </div>
 
 <script>
@@ -42,6 +39,10 @@
 
             $scope.add = function() {
                 controllerProxy.invoke('add');
+            };
+
+            $scope.stateChanged = function(name) {
+                controllerProxy.invoke('markChanged', {'itemName':name});
             };
 
         });

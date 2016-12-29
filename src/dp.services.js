@@ -72,20 +72,21 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
 
             $log.debug('Dolphin Platform binding listeners for Angular registered');
         },
+        watchAttribute: function (bean, attribute) {
+            $log.debug('Added Angular listener for property ' + attribute +  ' of bean ' + JSON.stringify(bean));
+            $rootScope.$watch(
+                function() { return bean[attribute]; },
+                function(newValue, oldValue) {
+                    $log.debug('Value ' + attribute + ' of bean ' + JSON.stringify(bean) + ' changed to ' + newValue);
+                    vanillaClientContext.beanManager.classRepository.notifyBeanChange(bean, attribute, newValue);
+                }
+            );
+        },
         onBeanAddedHandler: function(bean) {
             $log.debug('Bean ' + JSON.stringify(bean) + ' added');
 
             for(var attr in bean) {
-                var value = bean[attr];
-
-                $rootScope.$watch(
-                    function() { return bean[attr]; },
-                    // This is the change listener, called when the value returned from the above function changes
-                    function(newValue, oldValue) {
-                        $log.debug('Value ' + attr + ' of bean ' + JSON.stringify(bean) + ' changed to ' + newValue);
-                        vanillaClientContext.beanManager.classRepository.notifyBeanChange(bean, attr, newValue);
-                    }
-                );
+                dolphinBinding.watchAttribute(bean, attr);
             }
 
             $rootScope.applyInAngular();
@@ -95,6 +96,18 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
             $rootScope.applyInAngular();
         },
         onBeanUpdateHandler: function (bean, propertyName, newValue, oldValue) {
+            var newProperty = true;
+            for(var attr in bean) {
+                if(attr === propertyName) {
+                    newProperty = false;
+                }
+            }
+
+            if(newProperty) {
+                $log.debug('Value ' + propertyName + ' was added to bean ' + JSON.stringify(bean));
+                dolphinBinding.watchAttribute(bean, propertyName);
+            }
+
             if (oldValue === newValue) {
                 $log.debug('Received bean update for property ' + propertyName + ' without any change');
                 return;
@@ -119,6 +132,13 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
                 $rootScope.applyInAngular();
             } else {
                 dolphinBinding.injectArray(array, index, newElements);
+
+                for(bean in newElements) {
+                    for(var attr in bean) {
+                        dolphinBinding.watchAttribute(bean, attr);
+                    }
+                }
+
                 $rootScope.applyInAngular();
             }
         }
