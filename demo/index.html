@@ -2,19 +2,15 @@
 <html>
 <script src="../bower_components/angular/angular.js"></script>
 <script src="../bower_components/dolphin-js/dist/dolphin.js"></script>
-<script src="../src/dp.services.js"></script>
+<script src="../src/dp-angular.js"></script>
 
 <body>
 <script>
     var app = angular.module("MyApplication", ["DolphinPlatform"]).config(function ($dolphinConfigProvider) {
-        var readDolphinConfig = function () {
-            return {
-                DOLPHIN_URL: "http://localhost:8080/todo-app/dolphin"
-            };
-        };
-        $dolphinConfigProvider.configure(readDolphinConfig());
+        $dolphinConfigProvider.configure({
+            DOLPHIN_URL: "http://localhost:8080/todo-app/dolphin"
+        });
     });
-
 </script>
 
 
