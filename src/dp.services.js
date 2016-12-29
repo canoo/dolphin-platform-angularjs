@@ -1,6 +1,6 @@
 angular.module('DolphinPlatform', []);
 
-angular.module('DolphinPlatform').provider('$dolphinConfig', function () {
+angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
 
     var $cfg = {};
     this.configure = function (cfg) {
@@ -11,19 +11,19 @@ angular.module('DolphinPlatform').provider('$dolphinConfig', function () {
         return $cfg;
     };
 
-});
+}]);
 
 angular.module('DolphinPlatform').factory('dolphin', function () {
     return dolphin;
 });
 
-angular.module('DolphinPlatform').factory('vanillaClientContext', ['dolphin', '$dolphinConfig', '$window', function (dolphin, $dolphinConfig, $window) {
+angular.module('DolphinPlatform').factory('vanillaClientContext', ['dolphin', '$dolphinConfig', '$window', '$log', function (dolphin, $dolphinConfig, $window, $log) {
     var vanillaClientContext = dolphin.connect($dolphinConfig.DOLPHIN_URL, $dolphinConfig);
-
+    $log.debug('Basic Dolphin Platform context created');
     return vanillaClientContext;
 }]);
 
-angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vanillaClientContext', function ($rootScope, vanillaClientContext) {
+angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$timeout', 'vanillaClientContext', '$log', function ($rootScope, $timeout, vanillaClientContext, $log) {
 
     $rootScope.waitingForGlobalDolphinApply = false;
 
@@ -32,6 +32,7 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
             $rootScope.waitingForGlobalDolphinApply = true;
             $timeout(function () {
                 $rootScope.waitingForGlobalDolphinApply = false;
+                $log.debug('Angular apply is called by Dolphin Platform');
                 $rootScope.$apply();
             }, 100);
         }
@@ -39,10 +40,8 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
 
     var dolphinBinding = {
 
-        bindScope: function (scope, fn) {
-            return function () {
-                fn.apply(scope, arguments);
-            };
+        injectArray: function (baseArray, startIndex, insertArray) {
+            baseArray.splice.apply(baseArray, [startIndex, 0].concat(insertArray));
         },
         exists: function (object) {
             return typeof object !== 'undefined' && object !== null;
@@ -66,136 +65,95 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', 'vani
             return true;
         },
         init: function (beanManager) {
-            this.listeners = new Map();
+            beanManager.onAdded(dolphinBinding.onBeanAddedHandler);
+            beanManager.onRemoved(dolphinBinding.onBeanRemovedHandler);
+            beanManager.onBeanUpdate(dolphinBinding.onBeanUpdateHandler);
+            beanManager.onArrayUpdate(dolphinBinding.onArrayUpdateHandler);
 
-            beanManager.onBeanUpdate(this.onBeanUpdateHandler);
-            beanManager.onArrayUpdate(this.onArrayUpdateHandler);
+            $log.debug('Dolphin Platform binding listeners for Angular registered');
+        },
+        onBeanAddedHandler: function(bean) {
+            $log.debug('Bean ' + JSON.stringify(bean) + ' added');
+
+            for(var attr in bean) {
+                var value = bean[attr];
+
+                $rootScope.$watch(
+                    function() { return bean[attr]; },
+                    // This is the change listener, called when the value returned from the above function changes
+                    function(newValue, oldValue) {
+                        $log.debug('Value ' + attr + ' of bean ' + JSON.stringify(bean) + ' changed to ' + newValue);
+                        vanillaClientContext.beanManager.classRepository.notifyBeanChange(bean, attr, newValue);
+                    }
+                );
+            }
+
+            $rootScope.applyInAngular();
+        },
+        onBeanRemovedHandler: function(bean) {
+            $log.debug('Bean ' + JSON.stringify(bean) + ' removed');
+            $rootScope.applyInAngular();
         },
         onBeanUpdateHandler: function (bean, propertyName, newValue, oldValue) {
             if (oldValue === newValue) {
+                $log.debug('Received bean update for property ' + propertyName + ' without any change');
                 return;
             }
-            var listenerList = this.listeners.get(bean);
-            if (this.exists(listenerList) && listenerList.length > 0) {
-                var entry = listenerList[0];
-                var element = entry.element;
-                var path = entry.rootPath + '.' + propertyName;
-                console.error("Hier fehlt nun das setzten der property in angular");
-                //element.set(path, newValue);
-            } else {
-                console.error("Hier fehlt nun das setzten der property in angular");
-               // bean[propertyName] = newValue;
-            }
+
+            $log.debug('Bean update for property ' + propertyName + ' with new value "' + newValue + '"');
+
+            bean[propertyName] = newValue;
+            $rootScope.applyInAngular();
         },
         onArrayUpdateHandler: function (bean, propertyName, index, count, newElements) {
             var array = bean[propertyName];
             var oldElements = array.slice(index, index + count);
-            if (this.deepEqual(newElements, oldElements)) {
+            if (dolphinBinding.deepEqual(newElements, oldElements)) {
                 return;
             }
-            var listenerList = this.listeners.get(bean);
-            if (this.exists(listenerList) && listenerList.length > 0) {
-                var entry = listenerList[0];
-                var element = entry.element;
-                var path = entry.rootPath + '.' + propertyName;
-                if (typeof newElements === 'undefined') {
-                    console.error("Hier fehlt nun das mutieren der liste in angular");
-                    //element.splice(path, index, count);
-                } else {
-                    console.error("Hier fehlt nun das mutieren der liste in angular");
-                    //element.splice.apply(element, [path, index, count].concat(newElements));
-                }
+
+            $log.debug('Array update for property ' + propertyName + ' starting at index ' + index + ' with ' + JSON.stringify(newElements));
+
+            if (typeof newElements === 'undefined') {
+                array.splice(index, count);
+                $rootScope.applyInAngular();
             } else {
-                if (typeof newElements === 'undefined') {
-                    console.error("Hier fehlt nun das mutieren der liste in angular");
-                    //array.splice(index, count);
-                } else {
-                    console.error("Hier fehlt nun das mutieren der liste in angular");
-                    //array.splice.apply(array, [index, count].concat(newElements));
-                }
-            }
-        },
-        bind: function (element, rootPath, value) {
-            if (!this.exists(value) || typeof value !== 'object') {
-                return;
-            }
-            var listenerList = this.listeners.get(value);
-            if (!this.exists(listenerList)) {
-                listenerList = [];
-                this.listeners.set(value, listenerList);
-            }
-            listenerList.push({element: element, rootPath: rootPath});
-
-            if (Array.isArray(value)) {
-                for (var i = 0; i < value.length; i++) {
-                    this.bind(element, rootPath + '.' + i, value[i]);
-                }
-            } else if (typeof value === 'object') {
-                for (var propertyName in value) {
-                    if (value.hasOwnProperty(propertyName)) {
-                        this.bind(element, rootPath + '.' + propertyName, value[propertyName]);
-                    }
-                }
-            }
-        },
-        unbind: function (element, rootPath, value) {
-            if (!this.exists(value) || typeof value !== 'object') {
-                return;
-            }
-            var listenerList = this.listeners.get(value);
-            if (this.exists(listenerList)) {
-                var n = listenerList.length;
-                for (var i = 0; i < n; i++) {
-                    var entry = listenerList[i];
-                    if (entry.element === element && entry.rootPath === rootPath) {
-                        listenerList.splice(i, 1);
-
-                        if (Array.isArray(value)) {
-                            for (var j = 0; j < value.length; j++) {
-                                this.unbind(element, rootPath + '.' + j, value[j]);
-                            }
-                        } else if (typeof value === 'object') {
-                            for (var propertyName in value) {
-                                if (value.hasOwnProperty(propertyName)) {
-                                    this.unbind(element, rootPath + '.' + propertyName, value[propertyName]);
-                                }
-                            }
-                        }
-                        return;
-                    }
-                }
+                dolphinBinding.injectArray(array, index, newElements);
+                $rootScope.applyInAngular();
             }
         }
     };
+
+    $log.debug('Dolphin Platform binding created');
 
     return dolphinBinding;
 
 }]);
 
-angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', 'dolphinBinding', '$window', function (vanillaClientContext, dolphinBinding, $window) {
+angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', 'dolphinBinding', '$window', '$log', function (vanillaClientContext, dolphinBinding, $window, $log) {
     var clientContext = {
         createController: function (scope, controllerName) {
             return vanillaClientContext.createController(controllerName).then(function (controllerProxy) {
+                $log.debug('Creating Dolphin Platform controller ' + controllerName);
                 scope.$on("$destroy", function () {
+                    $log.debug('Destroying Dolphin Platform controller ' + controllerName);
                     controllerProxy.destroy();
                 });
                 scope.model = controllerProxy.model;
-
-                //TODO: Hier müssen Observer registeriert werden um scope.$apply() nach Änderungen aufzurufen /
-                // Änderungen an BeanManager weiterzureichen...
-
-                scope.$apply();
                 return controllerProxy;
             });
         },
         disconnect: function () {
             vanillaClientContext.disconnect();
+            $log.debug('Dolphin Platform context disconnected');
         }
     };
 
     dolphinBinding.init(vanillaClientContext.beanManager);
 
     $window.onbeforeunload = clientContext.disconnect;
+
+    $log.debug('Dolphin Platform context created');
 
     return clientContext;
 }]);
