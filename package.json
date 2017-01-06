@@ -1,0 +1,36 @@
+{
+  "name": "dolphin-platform-angularjs",
+  "version": "0.0.1",
+  "description": "Angular Js Client of the Dolphin Platform",
+  "main": "./dist/dolphin-platform-angular.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/canoo/dolphin-platform-angularjs.git"
+  },
+  "author": "Hendrik Ebbers <hendrik.ebbers@canoo.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "bower": "1.7.x",
+    "browserify": "13.0.x",
+    "chai": "3.5.x",
+    "del": "2.2.x",
+    "gulp": "3.9.x",
+    "gulp-derequire": "2.1.x",
+    "gulp-jshint": "2.0.x",
+    "gulp-load-plugins": "1.2.x",
+    "gulp-mocha": "2.2.x",
+    "gulp-rename": "1.2.x",
+    "gulp-sourcemaps": "1.6.x",
+    "gulp-uglify": "1.5.x",
+    "gulp-util": "3.0.x",
+    "jshint": "2.9.x",
+    "jshint-teamcity": "1.0.x",
+    "lodash": "4.12.x",
+    "lodash.assign": "4.0.x",
+    "mocha": "2.4.x",
+    "sinon": "1.17.x",
+    "vinyl-buffer": "1.0.x",
+    "vinyl-source-stream": "1.1.x",
+    "watchify": "3.7.x"
+  }
+}

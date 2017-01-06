@@ -1,3 +1,5 @@
+/*global dolphin*/
+'use strict';
 angular.module('DolphinPlatform', []);
 
 angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
@@ -77,7 +79,7 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
             $rootScope.$watch(
                 function() { return bean[attribute]; },
                 function(newValue, oldValue) {
-                    $log.debug('Value ' + attribute + ' of bean ' + JSON.stringify(bean) + ' changed to ' + newValue);
+                    $log.debug('Value ' + attribute + ' of bean ' + JSON.stringify(bean) +' changed from '+ oldValue+ ' to ' + newValue);
                     vanillaClientContext.beanManager.classRepository.notifyBeanChange(bean, attribute, newValue);
                 }
             );
@@ -155,7 +157,7 @@ angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContex
         createController: function (scope, controllerName) {
             return vanillaClientContext.createController(controllerName).then(function (controllerProxy) {
                 $log.debug('Creating Dolphin Platform controller ' + controllerName);
-                scope.$on("$destroy", function () {
+                scope.$on('$destroy', function () {
                     $log.debug('Destroying Dolphin Platform controller ' + controllerName);
                     controllerProxy.destroy();
                 });
@@ -177,6 +179,3 @@ angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContex
 
     return clientContext;
 }]);
-
-
-
