@@ -16,12 +16,9 @@ By doing so you can create enterprise application with a single server and sever
 
 ![Model sync](http://www.dolphin-platform.io/assets/img/features/pm1.png)
 
-
-For more information visit [our website](http://www.dolphin-platform.io).
-
 The Server sources of the Dolphin Platform can be found [here](https://github.com/canoo/dolphin-platform). 
 
-A complete documentation can be found [here](https://canoo.github.io/dolphin-platform/).
+For more information read the [documentation](https://canoo.github.io/dolphin-platform/) of the Dolphin Platform.
 
 ## Issue Tracking
 Please use the issue tracking system of the [Dolphin Platform](https://github.com/canoo/dolphin-platform) to report any bug or feature request.
