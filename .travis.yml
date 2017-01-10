@@ -1,7 +1,13 @@
 language: node_js
 node_js:
     - "0.10"
-
+dist: trusty
+addons:
+  sonarqube:
+      token:
+        secure: ${SONAR_TOKEN}
+      branches:
+        - master
 before_script:
   - npm install -g bower
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
@@ -12,4 +18,8 @@ before_script:
 
 script:
   - gulp build
+  - sonar-scanner
 
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
