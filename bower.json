@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-angularjs",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "main": "./dist/dolphin-platform-angular.js",
   "homepage": "https://github.com/canoo/dolphin-platform",
   "authors": [
@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "angular": "^1.6.0",
-    "dolphin-js": "^0.8.9",
+    "dolphin-platform-js": "^0.8.10",
     "core.js": "^2.4.1"
   }
 }

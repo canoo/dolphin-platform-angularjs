@@ -10,8 +10,6 @@ var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 
-
-
 gulp.task('clean', function() {
     del(['dist']);
 });
@@ -24,8 +22,6 @@ gulp.task('lint', function() {
 });
 
 gulp.task('verify', ['lint']);
-
-
 
 var mainBundler = browserify(assign({}, watchify.args, {
     entries: './src/dolphin-platform-angular.js',
