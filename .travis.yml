@@ -17,8 +17,8 @@ before_script:
   - bower update
 
 script:
-  - gulp build
-
+  - gulp ci build
+  - gulp saucelabs
 after_success:
   - sonar-scanner
 cache:
