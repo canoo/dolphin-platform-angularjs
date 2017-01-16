@@ -59,11 +59,7 @@ module.exports = function (config) {
             tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
             recordVideo: false,
-            startConnect: false,
-            connectOptions: {
-                port: 5757,
-                logfile: 'sauce_connect.log'
-            }
+            startConnect: false
         },
         captureTimeout: 120000,
         browserDisconnectTimeout: 10 * 1000,
