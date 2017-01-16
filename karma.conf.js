@@ -45,7 +45,7 @@ module.exports = function (config) {
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-        logLevel: config.LOG_INFO,
+        logLevel: config.LOG_DEBUG,
 
 
         // start these browsers
@@ -55,9 +55,15 @@ module.exports = function (config) {
 
         // Sauce Labs configuration
         sauceLabs: {
-            testName: 'dolphin-platform-js Unit Tests',
+            testName: 'dolphin-platform-angularjs Unit Tests',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
-            recordVideo: false
+            recordVideo: false,
+            startConnect: false,
+            connectOptions: {
+                port: 5757,
+                logfile: 'sauce_connect.log'
+            }
         },
         captureTimeout: 120000,
         browserDisconnectTimeout: 10 * 1000,
