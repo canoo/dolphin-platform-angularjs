@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "angular": "^1.6.0",
-    "dolphin-platform-js": "^0.8.10",
-    "core.js": "^2.4.1"
+    "dolphin-platform-js": "0.8.10",
+    "core.js": "2.4.0"
   }
 }
