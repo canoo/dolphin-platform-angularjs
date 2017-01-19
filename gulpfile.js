@@ -106,7 +106,7 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
             customLaunchers: customLaunchers,
             browsers: browsers,
             reporters: ['saucelabs'],
-            singleRun: false
+            singleRun: true
         },function(result){
             if(result === 0){
                 done();
