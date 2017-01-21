@@ -62,13 +62,12 @@ module.exports = function (config) {
             testName: 'dolphin-platform-angularjs Unit Tests',
             tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
-            recordVideo: false,
-            startConnect: false
+            recordVideo: false
         },
-        captureTimeout: 5 * 60 * 1000,
+        captureTimeout: 3 * 60 * 1000,
         browserDisconnectTimeout: 20 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 5 * 60 * 1000,
+        browserNoActivityTimeout: 3 * 60 * 1000,
 
 
         // Coverage configuration
