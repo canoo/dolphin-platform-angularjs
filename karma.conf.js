@@ -74,6 +74,5 @@ module.exports = function (config) {
         coverageReporter: {
             subdir: '.'
         }
-    })
-    ;
+    });
 };
