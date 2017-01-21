@@ -52,22 +52,19 @@ module.exports = function (config) {
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: ['PhantomJS'],
 
-        client: {
-            mocha: {
-                timeout: 20000 // 20 seconds
-            }
-        },
+
         // Sauce Labs configuration
         sauceLabs: {
             testName: 'dolphin-platform-angularjs Unit Tests',
             tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
             recordVideo: false
+            // startConnect: false
         },
-        captureTimeout: 3 * 60 * 1000,
-        browserDisconnectTimeout: 20 * 1000,
+        captureTimeout: 120000,
+        browserDisconnectTimeout: 10 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 3 * 60 * 1000,
+        browserNoActivityTimeout: 30 * 1000,
 
 
         // Coverage configuration
