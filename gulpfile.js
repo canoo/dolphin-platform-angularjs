@@ -102,18 +102,19 @@ gulp.task('ci', ['ci-test']);
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
         new Server({
-            configFile: __dirname + '/karma.conf.js',
-            customLaunchers: customLaunchers,
-            browsers: browsers,
-            reporters: ['saucelabs'],
-            singleRun: true
-        },function(result){
-            if(result === 0){
-                done();
-            } else {
-                done('Karma test failed: '+result);
+                configFile: __dirname + '/karma.conf.js',
+                customLaunchers: customLaunchers,
+                browsers: browsers,
+                reporters: ['saucelabs'],
+                singleRun: true
             }
-        }).start();
+            ,function(result){
+                if(result === 0){
+                    done();
+                } else {
+                    done('Karma test failed: '+result);
+                }
+            }).start();
     }
 }
 
@@ -129,13 +130,13 @@ function createSauceLabsTestPipe(customLaunchers, step) {
             browsers.push(allBrowsers.shift());
         }
 
-        step = createSauceLabsTestStep(customLaunchers, allBrowsers, step);
+        step = createSauceLabsTestStep(customLaunchers, browsers, step);
     }
 
     step();
 }
 
-gulp.task('saucelabs', ['build-test'], function (done) {
+gulp.task('saucelabs', ['ci-common'], function (done) {
     var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });
