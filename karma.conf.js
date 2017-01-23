@@ -23,7 +23,11 @@ module.exports = function (config) {
         // list of files to exclude
         exclude: [],
 
-
+        client: {
+            mocha: {
+                timeout: 20000 // 20 seconds
+            }
+        },
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {},
@@ -58,13 +62,13 @@ module.exports = function (config) {
             testName: 'dolphin-platform-angularjs Unit Tests',
             tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
-            recordVideo: false
-            // startConnect: false
+            recordVideo: false,
+            startConnect: false
         },
-        captureTimeout: 120000,
-        browserDisconnectTimeout: 10 * 1000,
+        captureTimeout: 5 * 60 * 1000,
+        browserDisconnectTimeout: 20 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 30 * 1000,
+        browserNoActivityTimeout: 5 * 60 * 1000,
 
 
         // Coverage configuration
