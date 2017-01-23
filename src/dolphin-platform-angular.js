@@ -1,5 +1,5 @@
-/*global dolphin*/
 'use strict';
+var dolphinClient = require('../bower_components/dolphin-platform-js/dist/dolphin-platform.js');
 angular.module('DolphinPlatform', []);
 
 angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
@@ -16,7 +16,7 @@ angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
 }]);
 
 angular.module('DolphinPlatform').factory('dolphin', function () {
-    return dolphin;
+    return dolphinClient;
 });
 
 angular.module('DolphinPlatform').factory('vanillaClientContext', ['dolphin', '$dolphinConfig', '$window', '$log', function (dolphin, $dolphinConfig, $window, $log) {
