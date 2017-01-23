@@ -3,6 +3,7 @@ node_js:
     - "0.10"
 dist: trusty
 addons:
+  sauce_connect: true
   sonarqube:
       token:
         secure: ${SONAR_TOKEN}
@@ -17,7 +18,8 @@ before_script:
   - bower update
 
 script:
-  - gulp build
+  - gulp ci build
+  - gulp saucelabs
 
 after_success:
   - sonar-scanner
