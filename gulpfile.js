@@ -136,7 +136,7 @@ function createSauceLabsTestPipe(customLaunchers, step) {
     step();
 }
 
-gulp.task('saucelabs', ['ci-common'], function (done) {
+gulp.task('saucelabs', ['build-test'], function (done) {
     var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });
