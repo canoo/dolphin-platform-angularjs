@@ -36,8 +36,8 @@
                 controllerProxy.invoke('add');
             };
 
-            $scope.stateChanged = function(name) {
-                controllerProxy.invoke('markChanged', {'itemName':name});
+            $scope.stateChanged = function (name) {
+                controllerProxy.invoke('change', {'item': name});
             };
 
         });

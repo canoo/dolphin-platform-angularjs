@@ -129,7 +129,7 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
 
             $log.debug('Array update for property ' + propertyName + ' starting at index ' + index + ' with ' + JSON.stringify(newElements));
 
-            if (typeof newElements === 'undefined' || newElements.length === 0) {
+            if (typeof newElements === 'undefined' || (newElements && newElements.length === 0)) {
                 array.splice(index, count);
                 $rootScope.applyInAngular();
             } else {
