@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-angularjs",
-  "version": "0.8.11",
+  "version": "0.8.12",
   "main": "./dist/dolphin-platform-angular.js",
   "homepage": "https://github.com/canoo/dolphin-platform",
   "authors": [
@@ -8,7 +8,7 @@
     "Hendrik Ebbers <hendrik.ebbers@canoo.com>",
     "Kunal Singh <kunal.singh@canoo.com>"
   ],
-  "description": "The AngularJS client of the Dolphin Platform. The Dolphin Platform framework implements the presentation model pattern and provides a modern way to create enterprise applications.",
+  "description": "The AngularJS client of the Dolphin Platform.",
   "keywords": [
     "Dolphin Platform"
   ],
@@ -32,7 +32,7 @@
   ],
   "dependencies": {
     "angular": "^1.6.0",
-    "dolphin-platform-js": "^0.8.11",
+    "dolphin-platform-js": "^0.8.12",
     "core.js": "^2.4.1"
   }
 }
