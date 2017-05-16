@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 'use strict';
-import ClientContextFactory from '../bower_components/dolphin-platform-js/dist/dolphin-platform.js';
+var dolphinClient = require('../bower_components/dolphin-platform-js/dist/dolphin-platform.js');
 angular.module('DolphinPlatform', []);
 
 angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
@@ -30,7 +30,7 @@ angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
 }]);
 
 angular.module('DolphinPlatform').factory('clientContextFactory', function () {
-    return new ClientContextFactory();
+    return new dolphinClient.ClientContextFactory();
 });
 
 angular.module('DolphinPlatform').factory('vanillaClientContext', ['clientContextFactory', '$dolphinConfig', function (clientContextFactory, $dolphinConfig) {
