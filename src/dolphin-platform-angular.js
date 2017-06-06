@@ -29,14 +29,12 @@ angular.module('DolphinPlatform').provider('$dolphinConfig', [function () {
 
 }]);
 
-angular.module('DolphinPlatform').factory('dolphin', function () {
-    return dolphinClient;
+angular.module('DolphinPlatform').factory('clientContextFactory', function () {
+    return new dolphinClient.ClientContextFactory();
 });
 
-angular.module('DolphinPlatform').factory('vanillaClientContext', ['dolphin', '$dolphinConfig', '$window', '$log', function (dolphin, $dolphinConfig, $window, $log) {
-    var vanillaClientContext = dolphin.connect($dolphinConfig.DOLPHIN_URL, $dolphinConfig);
-    $log.debug('Basic Dolphin Platform context created');
-    return vanillaClientContext;
+angular.module('DolphinPlatform').factory('vanillaClientContext', ['clientContextFactory', '$dolphinConfig', function (clientContextFactory, $dolphinConfig) {
+    return clientContextFactory.create($dolphinConfig.DOLPHIN_URL, $dolphinConfig);
 }]);
 
 angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$timeout', 'vanillaClientContext', '$log', function ($rootScope, $timeout, vanillaClientContext, $log) {
@@ -89,37 +87,39 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
             $log.debug('Dolphin Platform binding listeners for Angular registered');
         },
         watchAttribute: function (bean, attribute) {
-            $log.debug('Added Angular listener for property ' + attribute +  ' of bean ' + JSON.stringify(bean));
+            $log.debug('Added Angular listener for property ' + attribute + ' of bean ' + JSON.stringify(bean));
             $rootScope.$watch(
-                function() { return bean[attribute]; },
-                function(newValue, oldValue) {
-                    $log.debug('Value ' + attribute + ' of bean ' + JSON.stringify(bean) +' changed from '+ oldValue+ ' to ' + newValue);
+                function () {
+                    return bean[attribute];
+                },
+                function (newValue, oldValue) {
+                    $log.debug('Value ' + attribute + ' of bean ' + JSON.stringify(bean) + ' changed from ' + oldValue + ' to ' + newValue);
                     vanillaClientContext.beanManager.classRepository.notifyBeanChange(bean, attribute, newValue);
                 }
             );
         },
-        onBeanAddedHandler: function(bean) {
+        onBeanAddedHandler: function (bean) {
             $log.debug('Bean ' + JSON.stringify(bean) + ' added');
 
-            for(var attr in bean) {
+            for (var attr in bean) {
                 dolphinBinding.watchAttribute(bean, attr);
             }
 
             $rootScope.applyInAngular();
         },
-        onBeanRemovedHandler: function(bean) {
+        onBeanRemovedHandler: function (bean) {
             $log.debug('Bean ' + JSON.stringify(bean) + ' removed');
             $rootScope.applyInAngular();
         },
         onBeanUpdateHandler: function (bean, propertyName, newValue, oldValue) {
             var newProperty = true;
-            for(var attr in bean) {
-                if(attr === propertyName) {
+            for (var attr in bean) {
+                if (attr === propertyName) {
                     newProperty = false;
                 }
             }
 
-            if(newProperty) {
+            if (newProperty) {
                 $log.debug('Value ' + propertyName + ' was added to bean ' + JSON.stringify(bean));
                 dolphinBinding.watchAttribute(bean, propertyName);
             }
@@ -149,8 +149,8 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
             } else {
                 dolphinBinding.injectArray(array, index, newElements);
 
-                for(bean in newElements) {
-                    for(var attr in bean) {
+                for (bean in newElements) {
+                    for (var attr in bean) {
                         dolphinBinding.watchAttribute(bean, attr);
                     }
                 }
@@ -180,13 +180,24 @@ angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContex
             });
         },
         disconnect: function () {
-            vanillaClientContext.disconnect();
-            $log.debug('Dolphin Platform context disconnected');
+            vanillaClientContext.disconnect().then(function () {
+                $log.debug('Dolphin Platform context disconnected');
+            });
+        },
+        connect: function () {
+            vanillaClientContext.connect().then(function () {
+                dolphinBinding.init(vanillaClientContext.beanManager);
+                $log.debug('Dolphin Platform context connected');
+            });
+        },
+        onConnect: function () {
+            return vanillaClientContext.onConnect().then(function () {
+                $log.debug('Dolphin Platform context connected');
+            });
         }
     };
 
     dolphinBinding.init(vanillaClientContext.beanManager);
-
     $window.onbeforeunload = clientContext.disconnect;
 
     $log.debug('Dolphin Platform context created');

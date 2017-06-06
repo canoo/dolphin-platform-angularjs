@@ -25,21 +25,22 @@
 <script>
     app.controller("MyController", function($scope, clientContext) {
 
-        clientContext.createController($scope, 'ToDoController').
-        then(function (controllerProxy) {
+        clientContext.onConnect().then(function() {
+            clientContext.createController($scope, 'ToDoController').then(function (controllerProxy) {
 
-            $scope.$apply(function(){
-                $scope.model.newItemText = 'angular';
+                $scope.$apply(function () {
+                    $scope.model.newItemText = 'angular';
+                });
+
+                $scope.add = function () {
+                    controllerProxy.invoke('add');
+                };
+
+                $scope.stateChanged = function (name) {
+                    controllerProxy.invoke('change', {'item': name});
+                };
+
             });
-
-            $scope.add = function() {
-                controllerProxy.invoke('add');
-            };
-
-            $scope.stateChanged = function (name) {
-                controllerProxy.invoke('change', {'item': name});
-            };
-
         });
 
     });
