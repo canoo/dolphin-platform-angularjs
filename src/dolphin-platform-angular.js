@@ -186,7 +186,6 @@ angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContex
         },
         connect: function () {
             vanillaClientContext.connect().then(function () {
-                dolphinBinding.init(vanillaClientContext.beanManager);
                 $log.debug('Dolphin Platform context connected');
             });
         },
