@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-angularjs",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "The AngularJS client of the Dolphin Platform. The Dolphin Platform framework implements the presentation model pattern and provides a modern way to create enterprise applications.",
   "main": "./dist/dolphin-platform-angular.js",
   "repository": {
@@ -18,6 +18,7 @@
     "browserify": "13.0.x",
     "chai": "3.5.x",
     "del": "2.2.x",
+    "glob": "7.0.x",
     "gulp": "3.9.x",
     "gulp-derequire": "2.1.x",
     "gulp-jshint": "2.0.x",
@@ -27,21 +28,20 @@
     "gulp-sourcemaps": "1.6.x",
     "gulp-uglify": "1.5.x",
     "gulp-util": "3.0.x",
-    "jshint": "2.9.x",
+    "jshint": "^2.9.5",
     "jshint-teamcity": "1.0.x",
     "karma": "0.13.x",
     "karma-coverage": "1.0.x",
     "karma-mocha": "1.0.x",
     "karma-phantomjs-launcher": "1.0.x",
     "karma-sauce-launcher": "1.1.x",
-    "phantomjs": "2.1.x",
     "lodash": "4.12.x",
     "lodash.assign": "4.0.x",
     "mocha": "2.4.x",
+    "phantomjs": "2.1.x",
     "sinon": "1.17.x",
     "vinyl-buffer": "1.0.x",
     "vinyl-source-stream": "1.1.x",
-    "watchify": "3.7.x",
-    "glob": "7.0.x"
+    "watchify": "3.7.x"
   }
 }
