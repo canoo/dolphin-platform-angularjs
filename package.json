@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-angularjs",
-  "version": "1.0.0-CR.1",
+  "version": "1.0.0-CR.2",
   "description": "The AngularJS client of the Dolphin Platform. The Dolphin Platform framework implements the presentation model pattern and provides a modern way to create enterprise applications.",
   "main": "./dist/dolphin-platform-angular.js",
   "repository": {
@@ -14,7 +14,7 @@
     "babel-preset-es2015": "^6.9.0",
     "babel-register": "^6.9.0",
     "babelify": "^7.3.0",
-    "bower": "^1.7.10",
+    "bower": "^1.8.2",
     "browserify": "13.0.x",
     "chai": "3.5.x",
     "del": "2.2.x",
