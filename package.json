@@ -10,8 +10,8 @@
   "author": "Hendrik Ebbers <hendrik.ebbers@canoo.com>",
   "license": "Apache-2.0",
   "devDependencies": {
-    "babel": "6.5.2",
-    "babel-preset-es2015": "6.9.0",
+    "babel": "6.23.0",
+    "babel-preset-es2015": "6.24.1",
     "babel-register": "6.26.0",
     "babelify": "8.0.0",
     "bower": "1.8.2",
