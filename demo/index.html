@@ -24,7 +24,7 @@
 
 <script>
     app.controller("MyController", function($scope, clientContext) {
-
+        clientContext.connect();
         clientContext.onConnect().then(function() {
             clientContext.createController($scope, 'ToDoController').then(function (controllerProxy) {
 
