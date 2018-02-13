@@ -23,10 +23,9 @@
 </div>
 
 <script>
-    app.controller("MyController", function($scope, clientContext) {
+    app.controller("MyController", function ($scope, clientContext) {
         clientContext.connect();
-        clientContext.onConnect().then(function() {
-            clientContext.createController($scope, 'ToDoController').then(function (controllerProxy) {
+        clientContext.createController($scope, 'ToDoController').then(function (controllerProxy) {
 
                 $scope.$apply(function () {
                     $scope.model.newItemText = 'angular';
@@ -40,9 +39,7 @@
                     controllerProxy.invoke('change', {'item': name});
                 };
 
-            });
         });
-
     });
 </script>
 
