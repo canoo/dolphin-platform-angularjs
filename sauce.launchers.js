@@ -26,12 +26,12 @@ var browsers = {
         platform: 'Windows 7',
         version: '10.0'
     },
-    sl_win7_ie11: {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 7',
-        version: '11.0'
-    },
+    // sl_win7_ie11: {
+    //     base: 'SauceLabs',
+    //     browserName: 'internet explorer',
+    //     platform: 'Windows 7',
+    //     version: '11.0'
+    // },
     sl_win7_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -159,13 +159,13 @@ var browsers = {
         platformVersion: '5.1'
     }
     ,
-    sl_mac9_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'OS X 10.9',
-        version: '46.0'
-    }
-    ,
+    // sl_mac9_chrome: {
+    //     base: 'SauceLabs',
+    //     browserName: 'chrome',
+    //     platform: 'OS X 10.9',
+    //     version: '46.0'
+    // }
+    // ,
     sl_mac9_firefox: {
         base: 'SauceLabs',
         browserName: 'firefox',
