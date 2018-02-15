@@ -32,8 +32,8 @@
     "sonar-project.properties"
   ],
   "dependencies": {
-    "angular": "^1.6.0",
+    "angular": "1.6.9",
     "dolphin-platform-js": "master",
-    "core.js": "^2.4.1"
+    "core.js": "2.4.x"
   }
 }
