@@ -166,6 +166,25 @@ var browsers = {
     //     version: '46.0'
     // }
     // ,
+    // sl_mac9_firefox: {
+    //     base: 'SauceLabs',
+    //     browserName: 'firefox',
+    //     platform: 'OS X 10.9',
+    //     version: '42.0'
+    // },
+    // sl_mac9_safari: {
+    //     base: 'SauceLabs',
+    //     browserName: 'safari',
+    //     platform: 'OS X 10.9',
+    //     version: '7.0'
+    // },
+    // sl_mac9_chrome: {
+    //     base: 'SauceLabs',
+    //     browserName: 'chrome',
+    //     platform: 'OS X 10.9',
+    //     version: '46.0'
+    // }
+    // ,
     sl_mac9_firefox: {
         base: 'SauceLabs',
         browserName: 'firefox',
