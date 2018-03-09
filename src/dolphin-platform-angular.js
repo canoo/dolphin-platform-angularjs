@@ -42,7 +42,11 @@ angular.module('DolphinPlatform').factory('vanillaClientContext', ['clientContex
     return clientContextFactory.create($dolphinConfig.DOLPHIN_URL, $dolphinConfig);
 }]);
 
-angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$timeout', 'vanillaClientContext', 'logger', function ($rootScope, $timeout, vanillaClientContext, logger) {
+angular.module('DolphinPlatform').factory('handlerCache', function ($cacheFactory) {
+    return $cacheFactory('handlers');
+});
+
+angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$timeout', 'vanillaClientContext', 'handlerCache', 'logger', function ($rootScope, $timeout, vanillaClientContext, handlerCache, logger) {
 
     $rootScope.waitingForGlobalDolphinApply = false;
 
@@ -84,10 +88,17 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
             return true;
         },
         init: function (beanManager) {
-            beanManager.onAdded(dolphinBinding.onBeanAddedHandler);
-            beanManager.onRemoved(dolphinBinding.onBeanRemovedHandler);
-            beanManager.onBeanUpdate(dolphinBinding.onBeanUpdateHandler);
-            beanManager.onArrayUpdate(dolphinBinding.onArrayUpdateHandler);
+            var handlers = [];
+            var onBeanAddedHandlerResult = beanManager.onAdded(dolphinBinding.onBeanAddedHandler);
+            handlers.push(onBeanAddedHandlerResult);
+            var onBeanRemovedHandlerResult = beanManager.onRemoved(dolphinBinding.onBeanRemovedHandler);
+            handlers.push(onBeanRemovedHandlerResult);
+            var onBeanUpdateHandlerResult = beanManager.onBeanUpdate(dolphinBinding.onBeanUpdateHandler);
+            handlers.push(onBeanUpdateHandlerResult);
+            var onArrayUpdateHandlerResult = beanManager.onArrayUpdate(dolphinBinding.onArrayUpdateHandler);
+            handlers.push(onArrayUpdateHandlerResult);
+
+            handlerCache.put('handlers', handlers);
             logger.debug('Dolphin Platform binding listeners for Angular registered');
         },
         watchAttribute: function (bean, attribute) {
@@ -170,7 +181,7 @@ angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$tim
 
 }]);
 
-angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', 'dolphinBinding', '$window', 'logger', function (vanillaClientContext, dolphinBinding, $window, logger) {
+angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContext', 'dolphinBinding', '$window', 'handlerCache', 'logger', function (vanillaClientContext, dolphinBinding, $window, handlerCache, logger) {
     var clientContext = {
         createController: function (scope, controllerName) {
             return vanillaClientContext.createController(controllerName).then(function (controllerProxy) {
@@ -186,6 +197,13 @@ angular.module('DolphinPlatform').factory('clientContext', ['vanillaClientContex
         disconnect: function () {
             vanillaClientContext.disconnect().then(function () {
                 logger.debug('Dolphin Platform context disconnected');
+                //unsubscribe the handlers
+                const handlerArray = handlerCache.get('handlers');
+                for (var i = 0; i < handlerArray.length; i++) {
+                    const handler = handlerArray[i];
+                    handler.unsubscribe();
+                }
+                handlerCache.remove('handlers');
             });
         },
         connect: function () {
