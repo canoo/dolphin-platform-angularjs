@@ -14,6 +14,7 @@
  */
 'use strict';
 var dolphinClient = require('../bower_components/dolphin-platform-js/dist/dolphin-platform.js');
+window.platformClient = dolphinClient;
 angular.module('DolphinPlatform', []);
 
 
@@ -35,7 +36,7 @@ angular.module('DolphinPlatform').factory('logger', function () {
 });
 
 angular.module('DolphinPlatform').factory('clientContextFactory', function () {
-    return new dolphinClient.ClientContextFactory();
+    return dolphinClient.getService('ClientContextFactory');
 });
 
 angular.module('DolphinPlatform').factory('vanillaClientContext', ['clientContextFactory', '$dolphinConfig', function (clientContextFactory, $dolphinConfig) {
