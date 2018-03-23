@@ -43,9 +43,9 @@ angular.module('DolphinPlatform').factory('vanillaClientContext', ['clientContex
     return clientContextFactory.create($dolphinConfig.DOLPHIN_URL, $dolphinConfig);
 }]);
 
-angular.module('DolphinPlatform').factory('handlerCache', function ($cacheFactory) {
+angular.module('DolphinPlatform').factory('handlerCache', ['$cacheFactory', function ($cacheFactory) {
     return $cacheFactory('handlers');
-});
+}]);
 
 angular.module('DolphinPlatform').factory('dolphinBinding', ['$rootScope', '$timeout', 'vanillaClientContext', 'handlerCache', 'logger', function ($rootScope, $timeout, vanillaClientContext, handlerCache, logger) {
 
